@@ -18,7 +18,8 @@ module.exports = function (source, options) {
   var opts = util._extend({
     indent: '  ',
     short: false,
-    binary: false
+    binary: false,
+    escape: false
   }, options)
 
   var code = new CodeBuilder(opts.indent, opts.indent !== false ? ' \\\n' + opts.indent : ' ')
@@ -73,10 +74,8 @@ module.exports = function (source, options) {
     default:
       // raw request body
       if (source.postData.text) {
-        code.push(
-          '%s %s', opts.binary ? '--data-binary' : (opts.short ? '-d' : '--data'),
-          helpers.escape(helpers.quote(source.postData.text))
-        )
+        var postData = helpers.quote(source.postData.text);
+        code.push('%s %s', opts.binary ? '--data-binary' : (opts.short ? '-d' : '--data'), opts.escape ? helpers.escape(postData) : postData)
       }
   }
 
